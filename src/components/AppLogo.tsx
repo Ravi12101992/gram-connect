@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 
 interface AppLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -14,12 +13,11 @@ export default function AppLogo({
   layout = 'col',
   showSubtitle = true,
 }: AppLogoProps) {
-  // Dimensions for the cropped emblem circle
   const emblemSizes = {
     sm: 'w-10 h-10',
     md: 'w-14 h-14',
     lg: 'w-20 h-20',
-    xl: 'w-24 h-24',
+    xl: 'w-28 h-28',
   };
 
   const textSizes = {
@@ -37,31 +35,29 @@ export default function AppLogo({
     >
       {/* Circular Emblem with Wheat & River Sunrise */}
       <div
-        className={`relative ${emblemSizes[size]} rounded-full overflow-hidden shadow-md ring-2 ring-emerald-600/30 bg-white shrink-0 group`}
+        className={`relative ${emblemSizes[size]} rounded-full overflow-hidden shadow-md ring-2 ring-emerald-600/30 bg-white shrink-0 flex items-center justify-center p-0.5`}
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <img
-            src="/logo.png"
-            alt="GramConnect Emblem"
-            className="w-[140%] h-[140%] max-w-none object-cover -translate-y-[8%]"
-          />
-        </div>
+        <img
+          src="/emblem.png"
+          alt="GramConnect Emblem"
+          className="w-full h-full object-contain"
+        />
       </div>
 
       {/* Brand Text: Telugu in Orange, English in Green */}
-      <div className={layout === 'col' ? 'mt-2' : ''}>
+      <div className={layout === 'col' ? 'mt-2.5' : ''}>
         <div className="flex flex-col leading-tight">
-          <span className={`${textSizes[size].te} text-orange-600 tracking-tight`}>
+          <span className={`${textSizes[size].te} text-orange-600 tracking-tight font-extrabold`}>
             గ్రామ్‌కనెక్ట్
           </span>
-          <span className={`${textSizes[size].en} text-emerald-800 tracking-wide uppercase font-sans`}>
+          <span className={`${textSizes[size].en} text-emerald-800 tracking-wide uppercase font-sans font-bold`}>
             GramConnect
           </span>
         </div>
 
         {showSubtitle && (
           <p className="text-[10px] text-slate-500 font-medium mt-0.5">
-            స్మార్ట్ గ్రామం · మెరుగైన జీవనం
+            స్మార్ట్ గ్రామం · మన బాధ్యత
           </p>
         )}
       </div>
