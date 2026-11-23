@@ -119,6 +119,7 @@ export default function LoginView({ isModal = false, onClose }: LoginViewProps) 
         {/* Top-Right Flowing Green & Orange Ribbons */}
         <svg
           className="absolute -top-12 -right-12 w-96 h-96 sm:w-[500px] sm:h-[500px] text-emerald-600/15"
+          style={{ width: '400px', height: '400px', maxWidth: '100vw' }}
           viewBox="0 0 500 500"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -137,6 +138,7 @@ export default function LoginView({ isModal = false, onClose }: LoginViewProps) 
         {/* Bottom-Left Flowing Orange & Green Waves */}
         <svg
           className="absolute -bottom-16 -left-16 w-96 h-96 sm:w-[500px] sm:h-[500px]"
+          style={{ width: '400px', height: '400px', maxWidth: '100vw' }}
           viewBox="0 0 500 500"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -154,8 +156,11 @@ export default function LoginView({ isModal = false, onClose }: LoginViewProps) 
         </svg>
 
         {/* Wheat Stalk Silhouette (Left) */}
-        <div className="hidden lg:block absolute left-8 top-1/2 -translate-y-1/2 opacity-25 text-amber-600 select-none pointer-events-none">
-          <svg className="w-28 h-96" viewBox="0 0 100 400" fill="currentColor">
+        <div
+          className="hidden lg:block absolute left-8 top-1/2 -translate-y-1/2 opacity-25 text-amber-600 select-none pointer-events-none overflow-hidden"
+          style={{ width: '100px', height: '380px' }}
+        >
+          <svg style={{ width: '100px', height: '380px' }} viewBox="0 0 100 400" fill="currentColor">
             <path d="M50 400 Q45 200 48 50" stroke="#d97706" strokeWidth="3" fill="none" />
             <ellipse cx="36" cy="120" rx="12" ry="6" transform="rotate(-30 36 120)" />
             <ellipse cx="64" cy="130" rx="12" ry="6" transform="rotate(30 64 130)" />
@@ -169,8 +174,11 @@ export default function LoginView({ isModal = false, onClose }: LoginViewProps) 
         </div>
 
         {/* Wheat Stalk Silhouette (Right) */}
-        <div className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 opacity-25 text-amber-600 select-none pointer-events-none">
-          <svg className="w-28 h-96" viewBox="0 0 100 400" fill="currentColor">
+        <div
+          className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 opacity-25 text-amber-600 select-none pointer-events-none overflow-hidden"
+          style={{ width: '100px', height: '380px' }}
+        >
+          <svg style={{ width: '100px', height: '380px' }} viewBox="0 0 100 400" fill="currentColor">
             <path d="M50 400 Q55 200 52 50" stroke="#d97706" strokeWidth="3" fill="none" />
             <ellipse cx="64" cy="120" rx="12" ry="6" transform="rotate(30 64 120)" />
             <ellipse cx="36" cy="130" rx="12" ry="6" transform="rotate(-30 36 130)" />
