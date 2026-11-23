@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GramConnect — Smart Village Development App
+### మన గ్రామం · మన బాధ్యత (Smart Village · Better Living)
 
-## Getting Started
+Flowchart-based village governance and grievance management platform built with:
+- **Frontend**: Next.js App Router (React 19) + Tailwind CSS + Lucide Icons
+- **Backend**: Next.js Server Actions & API Routes + Node.js
+- **Database**: PostgreSQL (Prisma ORM schema) & Supabase-compatible store
+- **Language**: TypeScript
+- **Bilingual**: Full English & Telugu (తెలుగు) toggle
 
-First, run the development server:
+---
+
+## 🏛️ Application Architecture & Portals
+
+### 1. 👨‍🌾 Citizen Portal (పౌరుల సేవలు)
+- **Report a Problem**:
+  - 4 categories with Telugu descriptions:
+    - 🧹 **Sanitation (పారిశుధ్యం)**: Garbage dumping, missed collection, public toilets
+    - 🌊 **Drainage (మురుగు కాలువలు)**: Blocked drains, desilting, stagnant water
+    - 🚰 **Drinking Water (రక్షిత తాగునీరు)**: Pipeline leakages, public tap repairs, tank supply
+    - 💡 **Streetlights (వీధి దీపాలు)**: Non-working bulbs, damaged electric poles
+  - Photo evidence upload with camera preview
+  - GPS Coordinate capture (`16.5065° N, 80.6480° E`)
+  - Ward selector (Ward 1 to Ward 7) & Landmark description
+  - Instant Complaint ID generation (e.g., `GC-2026-105`)
+- **My Complaints & Status Tracking**:
+  - Visual 5-step lifecycle timeline:
+    - `Reported` → `Assigned` → `In Progress` → `Completed` → `Verified & Closed`
+  - Citizen Verification & Feedback: 5-star rating, comments, and **"Verify & Close"** or **"Reopen / Not Satisfied"**.
+
+---
+
+### 2. 🏛️ Panchayat Admin Portal (పంచాయతీ పాలనా డాష్‌బోర్డ్)
+- **KPI Metrics**: Total Complaints, Pending Review, In Progress, Completed, Overdue alerts
+- **Ledger & Filters**: Filter by Category, Ward, Status, or search by citizen name/ID
+- **Worker Assignment Modal**:
+  - Assign to verified field workers (Shiva Kumar, Suresh Reddy, Apparao)
+  - Set Priority (`URGENT`, `HIGH`, `MEDIUM`, `LOW`)
+  - Set Target Due Date
+- **Verification & Closure Loop**:
+  - Side-by-side inspection of Citizen Original Photo vs Field Worker Completion Photo
+  - One-click **"Verify & Mark Closed"** or **"Send Back for Rework"**
+- **Report Export**: Export live grievance ledger as CSV.
+
+---
+
+### 3. 👷 Field Worker Portal (ఫీల్డ్ వర్కర్ టాస్క్ సెంటర్)
+- Work order queue (`Assigned to Me`, `In Progress`, `Completed`)
+- Site navigation, citizen contact details, and landmark instructions
+- One-click **"Start Work"** on site
+- **"Mark Completed"** with after-work completion evidence photo & resolution notes.
+
+---
+
+### 4. 🗺️ Village GIS Map & Public Assets
+- Interactive map canvas with filter layers:
+  - Active grievances color-coded by urgency
+  - Village assets: Overhead water tanks, RO plants, solar high-mast lights, storm drains, community toilets.
+
+---
+
+### 5. 🏗️ Development Works Tracker & 📢 Announcements & 📞 Emergency Helplines
+- Public project ledger with budgets, funding sources (15th Finance Commission, Jal Jeevan Mission), and progress percentages
+- Official Grama Sabha circulars and water supply timing announcements
+- 24/7 one-click emergency contact dials for Panchayat Secretary, Line-man, Plumber, and ANM Health worker.
+
+---
+
+## 🚀 How to Run Locally
 
 ```bash
+cd gram-connect
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌐 How to Deploy for Free (Vercel / Render / Netlify)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See detailed steps in [DEPLOYMENT.md](file:///C:/Users/RaviTeja.Sadu/Music/gram-connect/DEPLOYMENT.md).
