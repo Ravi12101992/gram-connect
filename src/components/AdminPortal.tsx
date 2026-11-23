@@ -119,23 +119,23 @@ export default function AdminPortal() {
   return (
     <div className="space-y-6 pb-12">
       {/* Admin Header */}
-      <div className="bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 rounded-2xl p-6 text-white shadow-md">
+      <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg border border-emerald-700/50">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 bg-indigo-500/20 text-indigo-300 px-2.5 py-0.5 rounded-full text-xs font-semibold border border-indigo-400/30">
-              <LayoutDashboard className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-1.5 bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full text-xs font-bold border border-orange-400/30">
+              <LayoutDashboard className="w-3.5 h-3.5 text-orange-400" />
               <span>{language === 'te' ? 'పంచాయతీ పాలనా విభాగం' : 'Panchayat Governance Console'}</span>
             </div>
-            <h1 className="text-xl md:text-2xl font-black mt-1.5">{t.adminTitle}</h1>
-            <p className="text-xs md:text-sm text-indigo-200 mt-0.5">{t.adminSubtitle}</p>
+            <h1 className="text-2xl md:text-3xl font-black mt-2">{t.adminTitle}</h1>
+            <p className="text-xs md:text-sm text-emerald-100 mt-1">{t.adminSubtitle}</p>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleExportCSV}
-              className="bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3.5 py-2 rounded-xl border border-white/20 backdrop-blur-sm transition-all flex items-center gap-1.5"
+              className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-md shadow-orange-500/20 transition-all flex items-center gap-2"
             >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+              <FileSpreadsheet className="w-4 h-4 text-white" />
               <span>{t.exportReport}</span>
             </button>
           </div>

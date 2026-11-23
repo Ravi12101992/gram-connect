@@ -20,6 +20,13 @@ interface AppContextType {
   setRole: (role: UserRole) => void;
   currentUser: User;
   setCurrentUser: (user: User) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (auth: boolean) => void;
+  loginWithPhone: (phone: string, otp: string) => { success: boolean; user?: User; message?: string };
+  loginAsUser: (user: User) => void;
+  logout: () => void;
+  showAuthModal: boolean;
+  setShowAuthModal: (show: boolean) => void;
   complaints: Complaint[];
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -58,33 +65,36 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>('te'); // Default to Telugu as per prompt
+  const [language, setLanguage] = useState<Language>('te'); // Default to Telugu as per blueprint
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User>(initialUsers[0]);
   const [role, setRole] = useState<UserRole>('CITIZEN');
   const [activeTab, setActiveTab] = useState<string>('home');
-  const [currentUser, setCurrentUser] = useState<User>(initialUsers[0]);
   const [complaints, setComplaints] = useState<Complaint[]>(initialComplaints);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
-  // Synchronize currentUser when role changes
+  // Check persisted auth & complaints on mount
   useEffect(() => {
-    if (role === 'CITIZEN') {
-      setCurrentUser(initialUsers[0]);
-    } else if (role === 'ADMIN') {
-      setCurrentUser(initialUsers[2]);
-    } else if (role === 'FIELD_WORKER') {
-      setCurrentUser(initialUsers[3]);
-    }
-  }, [role]);
-
-  // Load persisted complaints from localStorage if available
-  useEffect(() => {
-    const saved = localStorage.getItem('gramconnect_complaints');
-    if (saved) {
-      try {
-        setComplaints(JSON.parse(saved));
-      } catch {
-        // use initial
+    try {
+      const savedAuth = localStorage.getItem('gramconnect_auth_user');
+      const savedIsAuth = localStorage.getItem('gramconnect_is_authenticated');
+      if (savedIsAuth === 'true' && savedAuth) {
+        const user = JSON.parse(savedAuth);
+        setCurrentUser(user);
+        setRole(user.role);
+        setIsAuthenticated(true);
+        if (user.role === 'ADMIN') setActiveTab('admin-dashboard');
+        else if (user.role === 'FIELD_WORKER') setActiveTab('worker-tasks');
+        else setActiveTab('home');
       }
+
+      const savedComplaints = localStorage.getItem('gramconnect_complaints');
+      if (savedComplaints) {
+        setComplaints(JSON.parse(savedComplaints));
+      }
+    } catch {
+      // ignore
     }
   }, []);
 
@@ -94,6 +104,66 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('gramconnect_complaints', JSON.stringify(newList));
     } catch {
       // ignore storage quota error
+    }
+  };
+
+  const loginAsUser = (user: User) => {
+    setCurrentUser(user);
+    setRole(user.role);
+    setIsAuthenticated(true);
+    setShowAuthModal(false);
+
+    try {
+      localStorage.setItem('gramconnect_auth_user', JSON.stringify(user));
+      localStorage.setItem('gramconnect_is_authenticated', 'true');
+    } catch {
+      // ignore
+    }
+
+    if (user.role === 'ADMIN') {
+      setActiveTab('admin-dashboard');
+    } else if (user.role === 'FIELD_WORKER') {
+      setActiveTab('worker-tasks');
+    } else {
+      setActiveTab('home');
+    }
+  };
+
+  const loginWithPhone = (phone: string, otp: string) => {
+    const cleanPhone = phone.trim().replace(/\D/g, '');
+    if (cleanPhone.length < 10) {
+      return { success: false, message: 'Please enter a valid 10-digit mobile number' };
+    }
+
+    // Find existing user or create a citizen user
+    const existing = initialUsers.find((u) => u.phone.endsWith(cleanPhone.slice(-10)));
+    let userToLogin: User;
+
+    if (existing) {
+      userToLogin = existing;
+    } else {
+      userToLogin = {
+        id: `user-citizen-${Date.now()}`,
+        name: `Citizen (${cleanPhone.slice(-4)})`,
+        nameTe: `పౌరుడు (${cleanPhone.slice(-4)})`,
+        phone: cleanPhone,
+        role: 'CITIZEN',
+        ward: 'Ward 3 (రామాలయం వీధి)',
+      };
+    }
+
+    loginAsUser(userToLogin);
+    return { success: true, user: userToLogin };
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setShowAuthModal(false);
+    try {
+      localStorage.removeItem('gramconnect_auth_user');
+      localStorage.removeItem('gramconnect_is_authenticated');
+    } catch {
+      // ignore
     }
   };
 
@@ -277,6 +347,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setRole,
         currentUser,
         setCurrentUser,
+        isAuthenticated,
+        setIsAuthenticated,
+        loginWithPhone,
+        loginAsUser,
+        logout,
+        showAuthModal,
+        setShowAuthModal,
         complaints,
         activeTab,
         setActiveTab,

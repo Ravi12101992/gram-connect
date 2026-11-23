@@ -19,6 +19,12 @@ import {
   Share2,
   ChevronRight,
   Sparkles,
+  CheckCircle2,
+  Navigation,
+  Check,
+  Wrench,
+  ShieldCheck,
+  Building2,
 } from 'lucide-react';
 
 export default function CitizenPortal() {
@@ -41,7 +47,10 @@ export default function CitizenPortal() {
   const [ward, setWard] = useState('Ward 3 (రామాలయం వీధి)');
   const [landmark, setLandmark] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string>('');
-  const [gpsCoordinates, setGpsCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [gpsCoordinates, setGpsCoordinates] = useState<{ lat: number; lng: number } | null>({
+    lat: 16.5065,
+    lng: 80.6480,
+  });
   const [gpsLoading, setGpsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedComplaint, setSubmittedComplaint] = useState<Complaint | null>(null);
@@ -64,28 +73,59 @@ export default function CitizenPortal() {
     'Ward 7 (కాలువ గట్టు / Canal Bund)',
   ];
 
-  const categoryIcons: Record<ComplaintCategory, { icon: React.ReactNode; color: string; bg: string }> = {
-    SANITATION: {
-      icon: <Trash2 className="w-6 h-6" />,
-      color: 'text-amber-600',
-      bg: 'bg-amber-50 border-amber-200 hover:border-amber-400',
+  // Visual Category Grid matching Screenshot 6
+  const categoryCards: {
+    id: ComplaintCategory;
+    titleEn: string;
+    titleTe: string;
+    icon: React.ReactNode;
+    iconBg: string;
+  }[] = [
+    {
+      id: 'SANITATION',
+      titleEn: 'Sanitation',
+      titleTe: 'పారిశుధ్యం',
+      icon: (
+        <div className="text-emerald-700">
+          <Trash2 className="w-10 h-10" />
+        </div>
+      ),
+      iconBg: 'bg-emerald-50 text-emerald-800',
     },
-    DRAINAGE: {
-      icon: <Waves className="w-6 h-6" />,
-      color: 'text-cyan-600',
-      bg: 'bg-cyan-50 border-cyan-200 hover:border-cyan-400',
+    {
+      id: 'DRAINAGE',
+      titleEn: 'Drainage',
+      titleTe: 'మురుగు కాలువలు',
+      icon: (
+        <div className="text-teal-700">
+          <Waves className="w-10 h-10" />
+        </div>
+      ),
+      iconBg: 'bg-teal-50 text-teal-800',
     },
-    DRINKING_WATER: {
-      icon: <Droplets className="w-6 h-6" />,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50 border-blue-200 hover:border-blue-400',
+    {
+      id: 'DRINKING_WATER',
+      titleEn: 'Drinking Water',
+      titleTe: 'రక్షిత తాగునీరు',
+      icon: (
+        <div className="text-blue-600">
+          <Droplets className="w-10 h-10" />
+        </div>
+      ),
+      iconBg: 'bg-blue-50 text-blue-800',
     },
-    STREETLIGHTS: {
-      icon: <Lightbulb className="w-6 h-6" />,
-      color: 'text-yellow-600',
-      bg: 'bg-yellow-50 border-yellow-200 hover:border-yellow-400',
+    {
+      id: 'STREETLIGHTS',
+      titleEn: 'Streetlights',
+      titleTe: 'వీధి దీపాలు',
+      icon: (
+        <div className="text-orange-500">
+          <Lightbulb className="w-10 h-10" />
+        </div>
+      ),
+      iconBg: 'bg-orange-50 text-orange-600',
     },
-  };
+  ];
 
   const handleSimulateGps = () => {
     setGpsLoading(true);
@@ -95,7 +135,7 @@ export default function CitizenPortal() {
         lng: 80.6480 + (Math.random() - 0.5) * 0.005,
       });
       setGpsLoading(false);
-    }, 800);
+    }, 600);
   };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,17 +161,17 @@ export default function CitizenPortal() {
         description,
         ward,
         landmark: landmark || 'Near Main Road',
-        photoUrl: photoPreview || 'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=600&auto=format&fit=crop&q=60',
+        photoUrl:
+          photoPreview ||
+          'https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=600&auto=format&fit=crop&q=60',
         latitude: gpsCoordinates?.lat,
         longitude: gpsCoordinates?.lng,
       });
       setSubmittedComplaint(newComp);
-      // reset form
       setTitle('');
       setDescription('');
       setLandmark('');
       setPhotoPreview('');
-      setGpsCoordinates(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -146,140 +186,115 @@ export default function CitizenPortal() {
   );
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* Hero Welcome Banner */}
-      {activeTab === 'home' && (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-800 via-teal-800 to-emerald-950 p-6 md:p-8 text-white shadow-lg">
-          <div className="relative z-10 max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-700/60 px-3 py-1 text-xs font-semibold text-emerald-200 backdrop-blur-sm border border-emerald-500/30">
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>{language === 'te' ? 'పౌరుల సేవా కేంద్రం' : 'GramConnect Citizen Services'}</span>
-            </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-              {language === 'te'
-                ? `నమస్కారం, ${currentUser.name} గారూ!`
-                : `Welcome, ${currentUser.name}!`}
-            </h1>
-            <p className="text-emerald-100 text-sm md:text-base leading-relaxed">
-              {language === 'te'
-                ? 'మీ వార్డు లేదా గ్రామంలో పారిశుధ్యం, తాగునీరు, డ్రైనేజ్ లేదా వీధి దీపాల సమస్య ఉందా? ఫోటో తీసి నివేదించండి. పంచాయతీ సిబ్బంది తక్షణమే పరిష్కరిస్తారు.'
-                : 'Report village issues directly to the Panchayat Secretary. Track real-time progress from assignment to photographic verification.'}
-            </p>
-
-            <div className="pt-2 flex flex-wrap gap-3">
-              <button
-                onClick={() => setActiveTab('report')}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2 text-sm"
-              >
-                <span>✍️ {t.navReport}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setActiveTab('my-complaints')}
-                className="bg-white/10 hover:bg-white/20 text-white font-semibold px-4 py-2.5 rounded-xl border border-white/20 backdrop-blur-sm transition-all text-sm"
-              >
-                📋 {t.navMyComplaints} ({complaints.length})
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 4 Category Quick Launch Cards */}
+    <div className="space-y-8 pb-12 max-w-5xl mx-auto">
+      {/* SECTION 1: REPORT VILLAGE ISSUES (Matching Screenshot 6) */}
       {(activeTab === 'home' || activeTab === 'report') && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">
-                {language === 'te' ? 'సమస్య కేటగిరీని ఎంచుకోండి' : 'Choose Complaint Category'}
-              </h2>
-              <p className="text-xs text-slate-500">
-                {language === 'te'
-                  ? 'సమస్యకు సరిపోయే విభాగాన్ని ఎంచుకుని ఫిర్యాదు నమోదు చేయండి'
-                  : 'Select the area of concern to initiate an on-ground work order'}
-              </p>
-            </div>
+        <div className="space-y-6">
+          {/* Header Title (Green & Orange) */}
+          <div className="text-center">
+            <h1 className="text-3xl sm:text-4xl font-black text-emerald-800 tracking-tight">
+              Report Village Issues
+            </h1>
+            <h2 className="text-2xl sm:text-3xl font-bold text-orange-500 mt-1">
+              సమస్యలను నివేదించండి
+            </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {(['DRINKING_WATER', 'STREETLIGHTS', 'SANITATION', 'DRAINAGE'] as ComplaintCategory[]).map((cat) => {
-              const active = selectedCategory === cat;
-              const meta = categoryIcons[cat];
+          {/* 4 Category 2x2 Grid (Matching Screenshot 6) */}
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 max-w-xl mx-auto">
+            {categoryCards.map((cat) => {
+              const active = selectedCategory === cat.id;
               return (
-                <div
-                  key={cat}
+                <button
+                  type="button"
+                  key={cat.id}
                   onClick={() => {
-                    setSelectedCategory(cat);
+                    setSelectedCategory(cat.id);
                     if (activeTab === 'home') setActiveTab('report');
                   }}
-                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                  className={`relative p-5 sm:p-6 bg-white rounded-3xl border-2 transition-all flex flex-col items-center justify-center text-center shadow-md hover:shadow-lg ${
                     active
-                      ? 'border-emerald-600 bg-emerald-50/70 shadow-sm scale-101'
-                      : `${meta.bg} border-slate-200`
+                      ? 'border-emerald-600 ring-4 ring-emerald-500/20 scale-102'
+                      : 'border-slate-200/90 hover:border-emerald-300'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2.5 rounded-lg bg-white shadow-xs ${meta.color}`}>
-                      {meta.icon}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-sm text-slate-900">{t.categories[cat]}</h3>
-                      <span className="text-[11px] font-medium text-slate-500">
-                        {language === 'te' ? 'ఫిర్యాదు చేయండి' : 'Click to Report'}
-                      </span>
-                    </div>
+                  {/* Category Illustration Icon */}
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mb-3">
+                    {cat.icon}
                   </div>
-                  <p className="mt-2.5 text-xs text-slate-600 leading-snug">
-                    {t.categoryDesc[cat]}
-                  </p>
-                </div>
+
+                  <span className="text-base sm:text-lg font-black text-slate-800">
+                    {cat.titleEn}
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-orange-500 mt-0.5">
+                    {cat.titleTe}
+                  </span>
+
+                  {/* Active Green Check */}
+                  {active && (
+                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                      ✓
+                    </div>
+                  )}
+                </button>
               );
             })}
           </div>
         </div>
       )}
 
-      {/* Report Form Wizard */}
+      {/* SECTION 2: SNAP PHOTO, GPS & SUBMIT (Matching Screenshots 4 & 7) */}
       {activeTab === 'report' && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 md:p-7 shadow-xs">
+        <div className="bg-white rounded-[36px] border border-slate-200 p-6 sm:p-8 shadow-xl max-w-2xl mx-auto space-y-6">
           {submittedComplaint ? (
-            /* Success confirmation screen */
-            <div className="text-center py-8 space-y-4 max-w-lg mx-auto">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle className="w-9 h-9" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">{t.complaintSuccess}</h3>
-                <p className="text-sm text-slate-600 mt-1">{t.keepForTracking}</p>
+            /* Instant ID Generated Screen (Screenshot 4) */
+            <div className="text-center py-6 space-y-5 animate-in fade-in duration-300">
+              {/* Green Pill Badge */}
+              <div className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-700 text-white rounded-full font-bold text-sm shadow-md">
+                <CheckCircle2 className="w-5 h-5 text-emerald-200" />
+                <span>✓ Complaint ID Generated</span>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl">
-                <p className="text-xs text-slate-500 uppercase font-semibold tracking-wider">
-                  {t.complaintIdNotice}
+              <div>
+                <h3 className="text-2xl font-black text-slate-900">
+                  {language === 'te' ? 'ఫిర్యాదు విజయవంతంగా నమోదైంది!' : 'Grievance Registered Successfully!'}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                  {language === 'te'
+                    ? 'మీ ఫిర్యాదు పంచాయతీ కార్యదర్శికి చేరింది. పురోగతిని లైవ్‌గా ట్రాక్ చేయండి.'
+                    : 'Your grievance has been dispatched to Panchayat Admin for review and worker assignment.'}
                 </p>
-                <p className="text-2xl font-black text-emerald-700 tracking-wider my-1">
+              </div>
+
+              <div className="bg-orange-50/60 border border-orange-200 p-5 rounded-3xl max-w-sm mx-auto">
+                <span className="text-xs uppercase font-extrabold text-orange-800 tracking-wider">
+                  Complaint ID
+                </span>
+                <p className="text-3xl font-black text-orange-600 tracking-wider my-1">
                   {submittedComplaint.id}
                 </p>
-                <div className="text-xs text-slate-600 flex justify-center gap-4 mt-2">
+                <div className="flex justify-center gap-3 text-xs text-slate-600 mt-2">
                   <span>📂 {t.categories[submittedComplaint.category]}</span>
-                  <span>📍 {submittedComplaint.ward}</span>
+                  <span>📍 {submittedComplaint.ward.split('(')[0]}</span>
                 </div>
               </div>
 
-              <div className="flex justify-center gap-3 pt-3">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 pt-3">
                 <button
+                  type="button"
                   onClick={() => {
                     setSelectedComplaint(submittedComplaint);
                     setActiveTab('my-complaints');
                     setSubmittedComplaint(null);
                   }}
-                  className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow-sm"
+                  className="px-6 py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm rounded-full shadow-lg shadow-orange-500/25 transition-all"
                 >
-                  🔍 {t.trackStatusBtn}
+                  🔍 {language === 'te' ? 'స్టేటస్ ట్రాక్ చేయండి' : 'Track Status'}
                 </button>
                 <button
+                  type="button"
                   onClick={() => setSubmittedComplaint(null)}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2.5 rounded-xl text-sm"
+                  className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-full transition-all"
                 >
                   + {language === 'te' ? 'మరొక సమస్య నివేదించండి' : 'Report Another Issue'}
                 </button>
@@ -287,78 +302,67 @@ export default function CitizenPortal() {
             </div>
           ) : (
             <form onSubmit={handleSubmitComplaint} className="space-y-6">
-              <div className="border-b border-slate-100 pb-4">
-                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                  <span>✍️ {t.reportTitle}</span>
-                  <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-semibold">
-                    {t.categories[selectedCategory]}
-                  </span>
+              {/* Header: Snap & Upload Photo (Screenshot 7) */}
+              <div className="text-center border-b border-slate-100 pb-4">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-orange-500">
+                  Snap & Upload Photo
+                </h2>
+                <h3 className="text-xl sm:text-2xl font-bold text-emerald-800 mt-0.5">
+                  ఫోటో తీసి అప్‌లోడ్ చేయండి
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">{t.reportSubtitle}</p>
               </div>
 
-              {/* Form Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Ward Selector */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    {t.wardNumber} *
-                  </label>
-                  <select
-                    value={ward}
-                    onChange={(e) => setWard(e.target.value)}
-                    className="w-full text-sm rounded-xl border border-slate-300 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                    required
+              {/* Camera Viewfinder Overlay (Screenshot 7) */}
+              <div className="relative rounded-3xl overflow-hidden bg-slate-900 border-2 border-slate-300 aspect-video flex items-center justify-center group">
+                {photoPreview ? (
+                  <img
+                    src={photoPreview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="relative w-full h-full flex flex-col items-center justify-center p-6 bg-slate-800/90 text-white">
+                    {/* Corner viewfinder brackets */}
+                    <div className="absolute top-4 left-4 w-10 h-10 border-t-4 border-l-4 border-emerald-400 rounded-tl-xl pointer-events-none"></div>
+                    <div className="absolute top-4 right-4 w-10 h-10 border-t-4 border-r-4 border-emerald-400 rounded-tr-xl pointer-events-none"></div>
+                    <div className="absolute bottom-4 left-4 w-10 h-10 border-b-4 border-l-4 border-emerald-400 rounded-bl-xl pointer-events-none"></div>
+                    <div className="absolute bottom-4 right-4 w-10 h-10 border-b-4 border-r-4 border-emerald-400 rounded-br-xl pointer-events-none"></div>
+
+                    <label className="cursor-pointer flex flex-col items-center justify-center">
+                      {/* Green Circular Camera Shutter Button (Screenshot 7) */}
+                      <div className="w-16 h-16 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg transform active:scale-95 transition-all mb-2">
+                        <Camera className="w-8 h-8" />
+                      </div>
+                      <span className="text-xs font-semibold text-slate-200">
+                        {language === 'te' ? 'ఫోటో తీయండి' : 'Tap to Capture Evidence'}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                )}
+
+                {photoPreview && (
+                  <button
+                    type="button"
+                    onClick={() => setPhotoPreview('')}
+                    className="absolute top-3 right-3 bg-black/70 hover:bg-black text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-xs"
                   >
-                    {wards.map((w) => (
-                      <option key={w} value={w}>
-                        {w}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                    Change Photo
+                  </button>
+                )}
+              </div>
 
-                {/* Landmark */}
+              {/* Form Input Fields */}
+              <div className="space-y-4">
+                {/* Description Input (Screenshot 7 style) */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    {t.landmark} *
-                  </label>
-                  <input
-                    type="text"
-                    value={landmark}
-                    onChange={(e) => setLandmark(e.target.value)}
-                    placeholder={
-                      language === 'te'
-                        ? 'ఉదా: రామాలయం ఎదురుగా, పోల్ #14 వద్ద'
-                        : 'e.g. Opposite Ramalayam Gate, Near Pole #14'
-                    }
-                    className="w-full text-sm rounded-xl border border-slate-300 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                    required
-                  />
-                </div>
-
-                {/* Issue Summary */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    {t.issueTitle}
-                  </label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder={
-                      language === 'te'
-                        ? 'ఉదా: తాగునీటి పైప్‌లైన్ లీకేజీ / లైట్ వెలగడం లేదు'
-                        : 'e.g. Water pipeline leaking / Streetlight bulb dead'
-                    }
-                    className="w-full text-sm rounded-xl border border-slate-300 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                  />
-                </div>
-
-                {/* Detailed Description */}
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    {t.issueDesc} *
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    {language === 'te' ? 'సమస్య వివరణ' : 'Describe the Issue'} *
                   </label>
                   <textarea
                     rows={3}
@@ -366,346 +370,273 @@ export default function CitizenPortal() {
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder={
                       language === 'te'
-                        ? 'సమస్య ఎప్పటి నుండి ఉంది? ఎంత తీవ్రంగా ఉంది? వివరాలు రాయండి...'
-                        : 'How long has this issue existed? Any safety hazard? Please explain...'
+                        ? 'సమస్య వివరాలు, ఎక్కడ ఉంది మరియు ఎంత తీవ్రంగా ఉందో రాయండి...'
+                        : 'Describe the problem clearly for field workers to locate...'
                     }
-                    className="w-full text-sm rounded-xl border border-slate-300 p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    className="w-full text-sm rounded-2xl border border-slate-300 p-3.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all shadow-xs"
                     required
                   />
                 </div>
 
-                {/* Photo Upload & Preview */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-700">
-                    📷 {t.uploadPhoto}
-                  </label>
-                  <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-emerald-500 transition-colors bg-slate-50">
-                    {photoPreview ? (
-                      <div className="space-y-2">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={photoPreview}
-                          alt="Evidence preview"
-                          className="h-36 w-full object-cover rounded-lg border border-slate-200"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setPhotoPreview('')}
-                          className="text-xs text-red-600 font-semibold hover:underline"
-                        >
-                          {language === 'te' ? 'ఫోటో తొలగించండి' : 'Remove Photo'}
-                        </button>
-                      </div>
-                    ) : (
-                      <label className="cursor-pointer block">
-                        <Camera className="w-8 h-8 text-slate-400 mx-auto mb-1" />
-                        <span className="text-xs text-slate-600 font-medium block">
-                          {language === 'te'
-                            ? 'కెమెరాతో ఫోటో తీయండి లేదా గ్యాలరీ నుండి ఎంచుకోండి'
-                            : 'Click to capture or upload photo'}
-                        </span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePhotoUpload}
-                          className="hidden"
-                        />
-                      </label>
-                    )}
-                  </div>
-                </div>
-
-                {/* GPS Location Capture */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-700">
-                    📍 {t.useMyLocation}
-                  </label>
-                  <div className="border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col justify-between h-[120px]">
-                    <div>
-                      {gpsCoordinates ? (
-                        <div className="flex items-center gap-2 text-xs font-bold text-emerald-700">
-                          <CheckCircle className="w-4 h-4 text-emerald-600" />
-                          <span>
-                            {gpsCoordinates.lat.toFixed(5)}° N, {gpsCoordinates.lng.toFixed(5)}° E
-                          </span>
-                        </div>
-                      ) : (
-                        <p className="text-xs text-slate-500">
-                          {language === 'te'
-                            ? 'ఫీల్డ్ వర్కర్ ఖచ్చితమైన స్థలానికి చేరుకోవడానికి GPS ఉపయోగపడుతుంది'
-                            : 'Enables field worker to accurately locate the exact spot on village map'}
-                        </p>
-                      )}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={handleSimulateGps}
-                      disabled={gpsLoading}
-                      className="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Ward */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      {language === 'te' ? 'వార్డు / వీధి' : 'Ward / Street'} *
+                    </label>
+                    <select
+                      value={ward}
+                      onChange={(e) => setWard(e.target.value)}
+                      className="w-full text-xs font-semibold rounded-2xl border border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                     >
-                      <MapPin className="w-3.5 h-3.5 text-red-600" />
-                      <span>
-                        {gpsLoading
-                          ? language === 'te'
-                            ? 'లొకేషన్ శోధిస్తోంది...'
-                            : 'Detecting GPS...'
-                          : gpsCoordinates
-                          ? language === 'te'
-                            ? 'లొకేషన్ రిఫ్రెష్ చేయండి'
-                            : 'Refresh GPS'
-                          : t.useMyLocation}
-                      </span>
-                    </button>
+                      {wards.map((w) => (
+                        <option key={w} value={w}>
+                          {w}
+                        </option>
+                      ))}
+                    </select>
                   </div>
+
+                  {/* Landmark */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      {language === 'te' ? 'గుర్తు / ల్యాండ్‌మార్క్' : 'Landmark'}
+                    </label>
+                    <input
+                      type="text"
+                      value={landmark}
+                      onChange={(e) => setLandmark(e.target.value)}
+                      placeholder={
+                        language === 'te'
+                          ? 'ఉదా: రామాలయం ఎదురుగా, పోల్ #12'
+                          : 'e.g. Opposite temple, near pole #12'
+                      }
+                      className="w-full text-xs font-semibold rounded-2xl border border-slate-300 p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Auto GPS Location Capture (Screenshot 4) */}
+                <div className="flex items-center justify-between p-3.5 bg-emerald-50/70 border border-emerald-200 rounded-2xl">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center shrink-0">
+                      <MapPin className="w-4 h-4 text-orange-400" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-emerald-950 block">
+                        Auto GPS: {gpsCoordinates?.lat.toFixed(4)}° N, {gpsCoordinates?.lng.toFixed(4)}° E
+                      </span>
+                      <span className="text-[11px] text-emerald-700">
+                        Accuracy: ~5 meters (Ramachandrapuram)
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleSimulateGps}
+                    className="text-xs font-bold text-orange-600 hover:text-orange-700 underline"
+                  >
+                    {gpsLoading ? 'Detecting...' : 'Refresh GPS'}
+                  </button>
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('home')}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100"
-                >
-                  {t.cancel}
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition-all flex items-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <span>{t.submitting}</span>
-                  ) : (
-                    <>
-                      <span>{t.submitComplaint}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </div>
+              {/* Big Vibrant Orange Pill Button: Submit Complaint / Next > */}
+              <button
+                type="submit"
+                disabled={isSubmitting || !description.trim()}
+                className="w-full py-4 px-6 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 text-white font-black text-base rounded-full shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition-all transform active:scale-98"
+              >
+                {isSubmitting ? (
+                  <span>{language === 'te' ? 'నమోదవుతోంది...' : 'Submitting...'}</span>
+                ) : (
+                  <>
+                    <span>{language === 'te' ? 'సమస్యను సమర్పించండి (Submit Complaint)' : 'Submit Complaint'}</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </>
+                )}
+              </button>
             </form>
           )}
         </div>
       )}
 
-      {/* My Complaints & Status Tracking View */}
+      {/* SECTION 3: FAST PANCHAYAT ACTION & TRACKING (Matching Screenshots 3 & 5) */}
       {(activeTab === 'home' || activeTab === 'my-complaints') && (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">
-                📋 {t.navMyComplaints}
-              </h2>
-              <p className="text-xs text-slate-500">
-                {language === 'te'
-                  ? 'మీరు నమోదు చేసిన సమస్యల పురోగతి మరియు పరిష్కార నివేదికలు'
-                  : 'Track lifecycle progress from Panchayat assignment to photographic verification'}
-              </p>
-            </div>
+        <div className="space-y-6">
+          {/* Header (Screenshot 3 style) */}
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-orange-500">
+              Fast Panchayat Action
+            </h2>
+            <h3 className="text-xl sm:text-2xl font-bold text-emerald-800 mt-0.5">
+              పంచాయతీ తక్షణ చర్య
+            </h3>
+          </div>
 
-            {/* Filter Tabs */}
-            <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-semibold gap-1">
+          {/* Filters Bar */}
+          <div className="flex justify-center">
+            <div className="inline-flex bg-slate-100 p-1 rounded-full border border-slate-200">
               {(['ALL', 'PENDING', 'IN_PROGRESS', 'COMPLETED'] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`px-3 py-1 rounded-lg transition-all ${
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                     statusFilter === st
-                      ? 'bg-white text-slate-900 shadow-xs font-bold'
+                      ? 'bg-orange-500 text-white shadow-sm'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   {st === 'ALL'
-                    ? language === 'te' ? 'అన్నీ' : 'All'
+                    ? language === 'te' ? 'అన్నీ (All)' : 'All'
                     : st === 'PENDING'
-                    ? language === 'te' ? 'సమీక్షలో' : 'Pending'
+                    ? language === 'te' ? 'సమీక్ష' : 'Pending'
                     : st === 'IN_PROGRESS'
                     ? language === 'te' ? 'జరుగుతున్నవి' : 'In Progress'
-                    : language === 'te' ? 'పూర్తయినవి' : 'Resolved'}
+                    : language === 'te' ? 'పరిష్కారం' : 'Completed'}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Grievances List */}
-          <div className="space-y-3">
-            {myComplaints.length === 0 ? (
-              <div className="text-center py-10 bg-white rounded-2xl border border-slate-200">
-                <FileCheck2 className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                <p className="text-sm font-semibold text-slate-600">{t.noComplaintsFound}</p>
-                <button
-                  onClick={() => setActiveTab('report')}
-                  className="mt-3 text-xs bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg"
+          {/* Grievances Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {myComplaints.map((item) => {
+              const isClosed = item.status === 'VERIFIED_CLOSED';
+              const isCompleted = item.status === 'COMPLETED';
+
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-3xl border border-slate-200/90 p-5 shadow-md hover:shadow-lg transition-all space-y-4"
                 >
-                  + {t.navReport}
-                </button>
-              </div>
-            ) : (
-              myComplaints.map((item) => {
-                const isCompletedAwaitingVerification =
-                  item.status === 'COMPLETED' && !item.closedAt;
+                  {/* Top Line: ID & Category */}
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-xs bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full border border-emerald-300">
+                      {item.id}
+                    </span>
 
-                return (
-                  <div
-                    key={item.id}
-                    className="bg-white rounded-xl border border-slate-200 p-4 hover:border-slate-300 transition-all shadow-xs"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                      {/* Left: Category Badge & Details */}
-                      <div className="flex items-start gap-3">
-                        <div className="p-2.5 rounded-xl bg-slate-100 text-slate-800">
-                          {categoryIcons[item.category].icon}
-                        </div>
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-mono font-bold text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                              {item.id}
-                            </span>
-                            <span className="text-xs font-bold text-slate-800">
-                              {t.categories[item.category]}
-                            </span>
-                            <span
-                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                item.status === 'VERIFIED_CLOSED'
-                                  ? 'bg-emerald-100 text-emerald-800'
-                                  : item.status === 'COMPLETED'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : item.status === 'IN_PROGRESS' || item.status === 'ASSIGNED'
-                                  ? 'bg-amber-100 text-amber-800'
-                                  : 'bg-slate-100 text-slate-700'
-                              }`}
-                            >
-                              {t.statuses[item.status]}
-                            </span>
-                          </div>
+                    <span
+                      className={`text-xs font-extrabold px-3 py-1 rounded-full ${
+                        isClosed
+                          ? 'bg-emerald-700 text-white shadow-xs'
+                          : isCompleted
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-orange-500 text-white shadow-xs'
+                      }`}
+                    >
+                      {item.status === 'VERIFIED_CLOSED'
+                        ? '✓ Completed & Verified'
+                        : item.status === 'COMPLETED'
+                        ? 'Completed'
+                        : item.status === 'IN_PROGRESS'
+                        ? 'Work In Progress'
+                        : 'Reviewed'}
+                    </span>
+                  </div>
 
-                          <h4 className="font-bold text-sm text-slate-900 mt-1">
-                            {language === 'te' && item.titleTe ? item.titleTe : item.title}
-                          </h4>
-                          <p className="text-xs text-slate-600 mt-0.5 line-clamp-2">
-                            {item.description}
-                          </p>
+                  {/* Title & Location */}
+                  <div>
+                    <h4 className="text-base font-black text-slate-900">
+                      {language === 'te' && item.titleTe ? item.titleTe : item.title}
+                    </h4>
+                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                      <MapPin className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                      <span>{item.ward} • {item.landmark}</span>
+                    </p>
+                  </div>
 
-                          <div className="flex flex-wrap items-center gap-3 mt-2 text-[11px] text-slate-500">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-red-500" />
-                              {item.ward} • {item.landmark}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-3 h-3 text-slate-400" />
-                              {new Date(item.createdAt).toLocaleDateString()}
-                            </span>
-                            {item.assignedWorkerName && (
-                              <span className="text-amber-800 font-medium">
-                                👷 {item.assignedWorkerName}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right: Actions */}
-                      <div className="flex sm:flex-col items-center sm:items-end justify-between gap-2 border-t sm:border-t-0 pt-2 sm:pt-0">
-                        <button
-                          onClick={() => setSelectedComplaint(item)}
-                          className="text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors flex items-center gap-1"
-                        >
-                          <span>{t.trackStatusBtn}</span>
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
-
-                        {isCompletedAwaitingVerification && (
-                          <button
-                            onClick={() => setActiveFeedbackId(activeFeedbackId === item.id ? null : item.id)}
-                            className="text-xs font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg border border-amber-300 transition-colors flex items-center gap-1"
-                          >
-                            <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
-                            <span>{language === 'te' ? 'ధృవీకరించండి' : 'Verify & Rate'}</span>
-                          </button>
-                        )}
-                      </div>
+                  {/* Step Action Cards (Matching Screenshot 3) */}
+                  <div className="space-y-2 pt-2 border-t border-slate-100">
+                    {/* Reviewed */}
+                    <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span>Reviewed</span>
+                      </span>
+                      <div className="w-24 h-2 bg-emerald-600 rounded-full"></div>
                     </div>
 
-                    {/* Citizen Verification & Feedback Accordion */}
-                    {activeFeedbackId === item.id && (
-                      <div className="mt-4 pt-4 border-t border-slate-100 bg-slate-50 p-4 rounded-xl space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h5 className="text-xs font-bold text-slate-800">
-                            ⭐ {t.satisfactionFeedback}
-                          </h5>
-                          <span className="text-[11px] text-emerald-700 font-semibold">
-                            {language === 'te' ? 'సిబ్బంది పని పూర్తయింది' : 'Worker marked task complete'}
-                          </span>
-                        </div>
+                    {/* Worker Assigned */}
+                    <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-orange-500" />
+                        <span>Worker Assigned ({item.assignedWorkerName ? item.assignedWorkerName.split('(')[0] : 'Pending'})</span>
+                      </span>
+                      <div
+                        className={`w-24 h-2 rounded-full ${
+                          item.assignedWorkerName ? 'bg-orange-500' : 'bg-slate-200'
+                        }`}
+                      ></div>
+                    </div>
 
-                        {/* Star Rating */}
-                        <div>
-                          <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                            {t.rateResolution}
-                          </label>
-                          <div className="flex gap-1.5">
-                            {[1, 2, 3, 4, 5].map((s) => (
-                              <button
-                                key={s}
-                                type="button"
-                                onClick={() => setFeedbackRating(s)}
-                                className="p-1 hover:scale-110 transition-transform"
-                              >
-                                <Star
-                                  className={`w-5 h-5 ${
-                                    s <= feedbackRating
-                                      ? 'text-amber-500 fill-amber-500'
-                                      : 'text-slate-300'
-                                  }`}
-                                />
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                    {/* Work in Progress */}
+                    <div className="p-2.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
+                      <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                        <Wrench className="w-4 h-4 text-emerald-600" />
+                        <span>Work In Progress</span>
+                      </span>
+                      <div
+                        className={`w-24 h-2 rounded-full ${
+                          item.status === 'IN_PROGRESS' || item.status === 'COMPLETED' || isClosed
+                            ? 'bg-emerald-600'
+                            : 'bg-slate-200'
+                        }`}
+                      ></div>
+                    </div>
+                  </div>
 
-                        {/* Comments */}
-                        <div>
-                          <input
-                            type="text"
-                            value={feedbackComment}
-                            onChange={(e) => setFeedbackComment(e.target.value)}
-                            placeholder={
-                              language === 'te'
-                                ? 'పని సంతృప్తికరంగా ఉందా? లేదా ఇంకా ఏమైనా సమస్య మిగిలి ఉందా?'
-                                : 'Was the work satisfactory? Any remaining remarks?'
-                            }
-                            className="w-full text-xs p-2 rounded-lg border border-slate-300 bg-white"
-                          />
-                        </div>
-
-                        <div className="flex gap-2 justify-end pt-1">
-                          <button
-                            onClick={() => {
-                              verifyComplaint(item.id, false, feedbackRating, feedbackComment);
-                              setActiveFeedbackId(null);
-                            }}
-                            className="px-3 py-1.5 rounded-lg text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200"
-                          >
-                            ❌ {t.reopenRequest}
-                          </button>
-                          <button
-                            onClick={() => {
-                              verifyComplaint(item.id, true, feedbackRating, feedbackComment);
-                              setActiveFeedbackId(null);
-                            }}
-                            className="px-4 py-1.5 rounded-lg text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 shadow-xs"
-                          >
-                            ✓ {t.verifyAndClose}
-                          </button>
+                  {/* Before / After Preview if Completed (Screenshot 5) */}
+                  {isCompleted && (
+                    <div className="bg-emerald-50/70 border border-emerald-200 p-3 rounded-2xl">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold text-emerald-900">
+                          ✓ Completed & Verified
+                        </span>
+                        <div className="flex text-orange-500">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star key={i} className="w-3.5 h-3.5 fill-orange-500" />
+                          ))}
                         </div>
                       </div>
-                    )}
-                  </div>
-                );
-              })
-            )}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="relative rounded-xl overflow-hidden h-20 border">
+                          <img
+                            src={item.photoUrl || ''}
+                            alt="Before"
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-1 left-1 bg-white/90 text-[10px] font-bold px-1.5 rounded">
+                            Before
+                          </span>
+                        </div>
+                        <div className="relative rounded-xl overflow-hidden h-20 border border-emerald-400">
+                          <img
+                            src={item.completionPhotoUrl || ''}
+                            alt="After"
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-1 left-1 bg-white/90 text-emerald-800 text-[10px] font-bold px-1.5 rounded">
+                            After
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* View Details Action Button */}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedComplaint(item)}
+                    className="w-full py-2.5 bg-slate-100 hover:bg-orange-500 hover:text-white text-slate-800 font-bold text-xs rounded-full transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <span>{language === 'te' ? 'వివరాలు & ఫోటోలు చూడండి' : 'View Full Details'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

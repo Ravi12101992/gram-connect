@@ -75,33 +75,33 @@ export default function FieldWorkerPortal() {
   return (
     <div className="space-y-6 pb-12">
       {/* Worker Header Banner */}
-      <div className="bg-gradient-to-r from-amber-700 via-orange-800 to-amber-950 rounded-2xl p-6 text-white shadow-md">
+      <div className="bg-gradient-to-r from-emerald-900 via-teal-900 to-emerald-950 rounded-3xl p-6 sm:p-8 text-white shadow-lg border border-emerald-700/50">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-200 px-2.5 py-0.5 rounded-full text-xs font-semibold border border-amber-400/30">
-              <Wrench className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-1.5 bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full text-xs font-bold border border-orange-400/30">
+              <Wrench className="w-3.5 h-3.5 text-orange-400" />
               <span>{language === 'te' ? 'ఫీల్డ్ వర్కర్ కార్యాలయం' : 'Field Operations App'}</span>
             </div>
-            <h1 className="text-xl md:text-2xl font-black mt-1.5">{t.workerTitle}</h1>
-            <p className="text-xs md:text-sm text-amber-100 mt-0.5">{t.workerSubtitle}</p>
+            <h1 className="text-2xl md:text-3xl font-black mt-2">{t.workerTitle}</h1>
+            <p className="text-xs md:text-sm text-emerald-100 mt-1">{t.workerSubtitle}</p>
           </div>
 
-          <div className="flex items-center gap-3 bg-black/20 p-3 rounded-xl border border-white/10">
+          <div className="flex items-center gap-3 bg-white/10 p-3 rounded-2xl border border-white/15 backdrop-blur-xs">
             <div className="text-right">
               <p className="text-xs font-bold text-white">{currentUser.name}</p>
-              <p className="text-[11px] text-amber-200">{currentUser.phone}</p>
+              <p className="text-[11px] text-orange-300 font-mono">+91 {currentUser.phone}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Task Status Tabs */}
-      <div className="flex bg-slate-100 p-1.5 rounded-2xl text-xs font-bold gap-2">
+      <div className="flex bg-slate-100 p-1.5 rounded-full text-xs font-bold gap-2">
         <button
           onClick={() => setActiveTabWorker('ASSIGNED')}
-          className={`flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-2.5 rounded-full transition-all flex items-center justify-center gap-2 ${
             activeTabWorker === 'ASSIGNED'
-              ? 'bg-amber-600 text-white shadow-sm'
+              ? 'bg-orange-500 text-white shadow-sm'
               : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -113,9 +113,9 @@ export default function FieldWorkerPortal() {
 
         <button
           onClick={() => setActiveTabWorker('IN_PROGRESS')}
-          className={`flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-2.5 rounded-full transition-all flex items-center justify-center gap-2 ${
             activeTabWorker === 'IN_PROGRESS'
-              ? 'bg-blue-600 text-white shadow-sm'
+              ? 'bg-emerald-700 text-white shadow-sm'
               : 'text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -127,9 +127,9 @@ export default function FieldWorkerPortal() {
 
         <button
           onClick={() => setActiveTabWorker('COMPLETED')}
-          className={`flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-2.5 rounded-full transition-all flex items-center justify-center gap-2 ${
             activeTabWorker === 'COMPLETED'
-              ? 'bg-emerald-600 text-white shadow-sm'
+              ? 'bg-teal-700 text-white shadow-sm'
               : 'text-slate-600 hover:text-slate-900'
           }`}
         >
